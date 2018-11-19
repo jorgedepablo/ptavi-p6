@@ -34,7 +34,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as my_socket:
     if response.split()[1] == '100':
         ack ='ACK sip:' + LOGIN + '@' + SERVER + ' SIP/2.0\r\n'
         my_socket.send(bytes(ack, 'utf-8') + b'\r\n')
-
+        print('Enviando: ' + ack)
     print('Terminando socket...')
 
 print('Fin.')
