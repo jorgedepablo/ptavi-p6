@@ -28,7 +28,7 @@ class EchoHandler(socketserver.DatagramRequestHandler):
             received_mess = line.decode('utf-8')
             if index == 0:
             # Leyendo primer string que nos envía el cliente
-                if received_mess.split()[1].split[1] != 'SIP/2.0':
+                if received_mess.split()[1].split[1] != 'SIP/2.0':  #PREGUNTAR !!!!!
                     self.wfile.write(b'400 Bad Request\r\n\r\n')
                 else:
                     print("El cliente nos manda " + received_mess)
@@ -42,7 +42,7 @@ class EchoHandler(socketserver.DatagramRequestHandler):
                     elif method == 'ACK':
                         ToRun = 'mp32rtp -i 127.0.0.1 -p 23032 < ' + FICH
                         print('vamos a ejecutar', ToRun)
-                        os.system(ToRun)
+                        os.system(ToRun) #ME PETA PREGUNTAR
                     else:
                         self.wfile.write(b'SIP/2.0 405 Method Not Allowed\r\n\r\n')
             else:
