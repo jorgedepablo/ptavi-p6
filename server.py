@@ -1,13 +1,10 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-"""
-Clase (y programa principal) para un servidor de eco en UDP simple
-"""
+"""Class (and main program) for echo register server in UDP simple."""
 
 import socketserver
 import sys
 import os
-import string
 
 try:
     SERVER = sys.argv[1]
@@ -18,15 +15,12 @@ except (IndexError, ValueError):
 
 
 class EchoHandler(socketserver.DatagramRequestHandler):
-    """
-    Echo server class
-    """
+    """Echo server class"""
 
     def check_request(self, mess):
+        # check if the SIP request is correctly formed
         body = mess.split()[1]
-        print(body)
         version = mess.split()[2]
-        print(version)
         self.correct = True
         if len(mess.split()) != 3:
             self.correct = False
@@ -41,41 +35,45 @@ class EchoHandler(socketserver.DatagramRequestHandler):
         return self.correct
 
     def handle(self):
-        # Escribe dirección y puerto del cliente (de tupla client_address)
+        # Handle method of the server class.
         received_mess = []
         for index, line in enumerate(self.rfile):
             received_mess = line.decode('utf-8')
             if index == 0:
-            # Leyendo primer string que nos envía el cliente
-                print("El cliente nos manda " + received_mess)
+            # Reading the first string that client send
+                client = received_mess.split(':')[1].split('@')[0]
+                print(client + ' send: '+ received_mess)
                 if self.check_request(received_mess):
                     method = received_mess.split()[0]
                     if method == 'INVITE':
                         self.wfile.write(b'SIP/2.0 100 Trying\r\n\r\n' +
                                          b'SIP/2.0 180 Ring\r\n\r\n' +
                                          b'SIP/2.0 200 OK\r\n\r\n')
-                        print('Envio un 100 Trying')
-                        print('Envio un 180 Ring')
-                        print('Envio un 200 OK')
+                        print('Sending 100 Trying')
+                        print('Sending 180 Ring')
+                        print('Sending 200 OK')
                     elif method == 'BYE':
                         self.wfile.write(b'SIP/2.0 200 OK\r\n\r\n')
-                        print('Envio un 200 OK')
+                        print('Sending 200 OK')
                     elif method == 'ACK':
                         ToRun = 'mp32rtp -i 127.0.0.1 -p 23032 < ' + FICH
-                        print('Vamos a ejecutar', ToRun)
+                        print('Running: ', ToRun)
                         os.system(ToRun)
                     else:
                         self.wfile.write(b'SIP/2.0 405 Method Not Allowed\r\n\r\n')
-                        print('Envio un 405 Method Not Allowed')
+                        print('Sending 405 Method Not Allowed')
                 else:
                     self.wfile.write(b'SIP/2.0 400 Bad Request\r\n\r\n')
-                    print('Envio un 400 Bad Request')
+                    print('Sending 400 Bad Request')
             else:
-            # Si no hay más líneas salimos del bucle infinito
+            # if no more lines, exit of the loop.
                 break
 
 if __name__ == "__main__":
-    # Creamos servidor de eco y escuchamos
+    # Create echo server and listening
     serv = socketserver.UDPServer((SERVER, PORT), EchoHandler)
     print('Listening...')
-    serv.serve_forever()
+    try:
+        serv.serve_forever()
+    except KeyboardInterrupt:
+        print('  Server interrupt')
