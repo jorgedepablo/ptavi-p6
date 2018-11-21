@@ -24,7 +24,9 @@ class EchoHandler(socketserver.DatagramRequestHandler):
 
     def check_request(self, mess):
         body = mess.split()[1]
+        print(body)
         version = mess.split()[2]
+        print(version)
         self.correct = True
         if len(mess.split()) != 3:
             self.correct = False
@@ -33,6 +35,8 @@ class EchoHandler(socketserver.DatagramRequestHandler):
         if body.find('@') == -1:
             self.correct = False
         if body.split(':')[0] != 'sip':
+            self.correct = False
+        if body.split(':')[1].startswith(':'):
             self.correct = False
         return self.correct
 
