@@ -30,7 +30,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as my_socket:
     response = data.decode('utf-8')
     print(response)
     if response.split()[1] == '100':
-        ack ='ACK sip:' + LOGIN + '@' + SERVER + ' SIP/2.0\r\n'
+        ack = 'ACK sip:' + LOGIN + '@' + SERVER + ' SIP/2.0\r\n'
         my_socket.send(bytes(ack, 'utf-8') + b'\r\n')
         print('Sending: ' + ack)
     print('Ending socket...')
