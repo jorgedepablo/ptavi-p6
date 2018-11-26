@@ -25,18 +25,29 @@ class EchoHandler(socketserver.DatagramRequestHandler):
 
     def check_request(self, mess):
         """Check if the SIP request is correctly formed."""
-        body = mess.split()[1]
-        version = mess.split()[2]
         self.correct = True
+        try:
+            body = mess.split()[1]
+            version = mess.split()[2]
+        except IndexError:
+            self.correct = False
+
         if len(mess.split()) != 3:
             self.correct = False
         if version != 'SIP/2.0':
             self.correct = False
+
         if body.find('@') == -1:
             self.correct = False
-        if body.split(':')[0] != 'sip':
+        try:
+            user = body.split('@')[0]
+            ip = body.split('@')[1]
+        except IndexError:
             self.correct = False
-        if body.split(':')[1].startswith(':'):
+
+        if user.split(':')[0] != 'sip':
+            self.correct = False
+        if user.split(':')[1].startswith(':'):
             self.correct = False
         return self.correct
 
