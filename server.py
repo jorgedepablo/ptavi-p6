@@ -13,6 +13,12 @@ try:
 except (IndexError, ValueError):
     sys.exit('Usage: python3 server.py IP port audio_file')
 
+TRYNING = b'SIP/2.0 100 Trying\r\n\r\n'
+RING = b'SIP/2.0 180 Ring\r\n\r\n'
+OK = b'SIP/2.0 200 OK\r\n\r\n'
+NOT_ALLOWED = b'SIP/2.0 405 Method Not Allowed\r\n\r\n'
+BAD_REQUEST = b'SIP/2.0 400 Bad Request\r\n\r\n'
+
 
 class EchoHandler(socketserver.DatagramRequestHandler):
     """Echo server class."""
@@ -46,25 +52,24 @@ class EchoHandler(socketserver.DatagramRequestHandler):
                 if self.check_request(received_mess):
                     method = received_mess.split()[0]
                     if method == 'INVITE':
-                        self.wfile.write(b'SIP/2.0 100 Trying\r\n\r\n')
-                        self.wfile.write(b'SIP/2.0 180 Ring\r\n\r\n')
-                        self.wfile.write(b'SIP/2.0 200 OK\r\n\r\n')
+                        self.wfile.write(TRYNING)
+                        self.wfile.write(RING)
+                        self.wfile.write(OK)
                         print('Sending 100 Trying')
                         print('Sending 180 Ring')
                         print('Sending 200 OK')
                     elif method == 'BYE':
-                        self.wfile.write(b'SIP/2.0 200 OK\r\n\r\n')
+                        self.wfile.write(OK)
                         print('Sending 200 OK')
                     elif method == 'ACK':
                         ToRun = 'mp32rtp -i 127.0.0.1 -p 23032 < ' + FICH
                         print('Running: ', ToRun)
                         os.system(ToRun)
                     else:
-                        self.wfile.write(b'SIP/2.0 405 Method Not \
-                                         Allowed\r\n\r\n')
+                        self.wfile.write(NOT_ALLOWED)
                         print('Sending 405 Method Not Allowed')
                 else:
-                    self.wfile.write(b'SIP/2.0 400 Bad Request\r\n\r\n')
+                    self.wfile.write(BAD_REQUEST)
                     print('Sending 400 Bad Request')
             else:
                 # If no more lines, exit of the loop.
