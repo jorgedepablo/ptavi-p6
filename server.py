@@ -26,9 +26,18 @@ class EchoHandler(socketserver.DatagramRequestHandler):
     def check_request(self, mess):
         """Check if the SIP request is correctly formed."""
         self.correct = True
+        valid_characters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',
+                            'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't',
+                            'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D',
+                            'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
+                            'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
+                            'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7',
+                            '8', '9', '_', '-', '.']
         try:
             body = mess.split()[1]
             version = mess.split()[2]
+            user = body.split('@')[0]
+            ip = body.split('@')[1]
         except IndexError:
             self.correct = False
 
@@ -36,19 +45,12 @@ class EchoHandler(socketserver.DatagramRequestHandler):
             self.correct = False
         if version != 'SIP/2.0':
             self.correct = False
-
-        if body.find('@') == -1:
-            self.correct = False
-        try:
-            user = body.split('@')[0]
-            ip = body.split('@')[1]
-        except IndexError:
-            self.correct = False
-
         if user.split(':')[0] != 'sip':
             self.correct = False
-        if user.split(':')[1].startswith(':'):
-            self.correct = False
+        for character in user.split(':')[1] and ip:
+            if character not in valid_characters:
+                self.correct = False
+
         return self.correct
 
     def handle(self):
