@@ -47,10 +47,10 @@ class EchoHandler(socketserver.DatagramRequestHandler):
             self.correct = False
         if user.split(':')[0] != 'sip':
             self.correct = False
-        for character in user.split(':')[1] and ip:
+        for character in user.split(':')[1]:
             if character not in valid_characters:
                 self.correct = False
-
+                
         return self.correct
 
     def handle(self):
