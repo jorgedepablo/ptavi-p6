@@ -50,7 +50,7 @@ class EchoHandler(socketserver.DatagramRequestHandler):
         for character in user.split(':')[1]:
             if character not in valid_characters:
                 self.correct = False
-                
+
         return self.correct
 
     def handle(self):
