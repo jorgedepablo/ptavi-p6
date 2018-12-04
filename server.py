@@ -22,10 +22,11 @@ BAD_REQUEST = b'SIP/2.0 400 Bad Request\r\n\r\n'
 
 class EchoHandler(socketserver.DatagramRequestHandler):
     """Echo server class."""
+    def __init__(self):
+        self.correct = True
 
     def check_request(self, mess):
         """Check if the SIP request is correctly formed."""
-        self.correct = True
         valid_characters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',
                             'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't',
                             'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D',
@@ -37,7 +38,7 @@ class EchoHandler(socketserver.DatagramRequestHandler):
             body = mess.split()[1]
             version = mess.split()[2]
             user = body.split('@')[0]
-            ip = body.split('@')[1]
+            body.split('@')[1]
         except IndexError:
             self.correct = False
 

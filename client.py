@@ -17,7 +17,7 @@ except (IndexError, ValueError):
     sys.exit('Usage: python3 client.py method receiver@IP:SIPport')
 
 # Content to send
-LINE = METHOD + ' sip:' + LOGIN + '@' + SERVER + ' SIP/2.0\r\n'
+LINE = METHOD + ' sip:' + LOGIN + '@' + SERVER + ' SIP/2.0\r\n\r\n'
 
 # Create the socket, configure it and attach it to server/port
 with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as my_socket:
@@ -25,13 +25,13 @@ with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as my_socket:
     my_socket.connect((SERVER, PORT))
 
     print('Sending: ' + LINE)
-    my_socket.send(bytes(LINE, 'utf-8') + b'\r\n')
+    my_socket.send(bytes(LINE, 'utf-8'))
     data = my_socket.recv(1024)
     response = data.decode('utf-8')
     print(response)
     if response.split()[1] == '100':
-        ack = 'ACK sip:' + LOGIN + '@' + SERVER + ' SIP/2.0\r\n'
-        my_socket.send(bytes(ack, 'utf-8') + b'\r\n')
+        ack = 'ACK sip:' + LOGIN + '@' + SERVER + ' SIP/2.0\r\n\r\n'
+        my_socket.send(bytes(ack, 'utf-8'))
         print('Sending: ' + ack)
     print('Ending socket...')
 
